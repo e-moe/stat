@@ -81,7 +81,7 @@ $(function () {
                     }
                     latency = sprintf('<span class="label label-%s">%s</span>', cls, status);
                     if (false !== r.latency) {
-                        sprintf('<span class="label label-%s" data-toggle="tooltip" data-placement="right" title="%s ms" >%s</span>',
+                        latency = sprintf('<span class="label label-%s" data-toggle="tooltip" data-placement="right" title="%d ms" >%s</span>',
                             cls, r.latency, status
                             );
                     }
