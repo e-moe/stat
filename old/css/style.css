@@ -1,0 +1,18 @@
+header,
+nav,
+section,
+article,
+aside,
+footer {
+    display: block;
+}
+
+body {
+    width: 55em;
+    margin: 0 auto;
+}
+
+#tab-lan .data {
+    white-space: pre;
+    font-family: monospace;
+}
