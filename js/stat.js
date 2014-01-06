@@ -23,6 +23,7 @@ $(function () {
                 'yahoo':   '206.190.36.45'
             },
             updateInterval: 15000,
+            alertTimeout: 5000,
             api: 'api.php',
             update: function () {
                 // all in one
@@ -42,6 +43,18 @@ $(function () {
                 app.getData(['hostname']);
 
                 setInterval(app.update, app.updateInterval);
+
+                $('#wol-modal').on('show.bs.modal', function (e) {
+                    var $span = $(e.relatedTarget).prev(),
+                        alias = $span.text(),
+                        ip = $span.data('original-title');
+                    $('.wol-alias').text(alias);
+                    $('.api-wol').data('alias', alias);
+                });
+                $('.api-wol').click(function () {
+                    var alias = $(this).data('alias');
+                    app.getData(['wol'], {'wol': alias});
+                });
             },
             getData: function (components, params) {
                 $.post("api.php", {'components': components, 'params': params}, function (data) {
@@ -53,6 +66,15 @@ $(function () {
                 for (c in data) { if (data.hasOwnProperty(c)) {
                     utils.executeFunctionByName('api_' + c, app, data[c]);
                 } }
+            },
+            showAlert: function (html, timeout) {
+                var timeOut = timeout || app.alertTimeout,
+                    id = 'alert-' + Date.now(),
+                    tmpl = '<div id="%s" class="alert alert-warning alert-dismissable">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                        '%s</div>';
+                $('.alerts').append(sprintf(tmpl, id, html));
+                setTimeout(function () { $('#' + id).remove(); }, timeOut);
             },
             api_lan: function (data) {
                 var html = '',
@@ -79,16 +101,16 @@ $(function () {
                             cls = 'danger';
                         }
                     }
-                    latency = sprintf('<span class="label label-%s">%s</span>', cls, status);
+                    latency = sprintf('<a href="#" data-placement="right" title="Wake up" class="label label-%s" data-toggle="modal" data-target="#wol-modal">%s</a>', cls, status);
                     if (false !== r.latency) {
-                        latency = sprintf('<span class="label label-%s" data-toggle="tooltip" data-placement="right" title="%d ms" >%s</span>',
+                        latency = sprintf('<span class="label label-%s" data-placement="right" title="%d ms" >%s</span>',
                             cls, r.latency, status
                             );
                     }
 
                     html += sprintf('%s %-' + align + 's %s\n', name, '', latency);
                 } }
-                $('.api-lan').html(html).find('span').tooltip();
+                $('.api-lan').html(html).find('span, a').tooltip();
 
             },
             api_top: function (data) {
@@ -161,6 +183,9 @@ $(function () {
             },
             api_hostname: function (data) {
                 $('.api-hostname').html(data);
+            },
+            api_wol: function (data) {
+                app.showAlert(data);
             }
         };
 

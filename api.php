@@ -14,7 +14,7 @@ $components = getData('components', $_POST);
 $params = getData('params', $_POST);
 $response = [];
 
-$API_LIST = ['api_lan', 'api_top', 'api_sysinfo', 'api_uptime', 'api_hdd_temp', 'api_hdd_usage', 'api_hostname'];
+$API_LIST = ['api_lan', 'api_top', 'api_sysinfo', 'api_uptime', 'api_hdd_temp', 'api_hdd_usage', 'api_hostname', 'api_wol'];
 
 foreach($components as $c)
 {
@@ -120,6 +120,21 @@ function api_hdd_usage($params)
 function api_hostname($params)
 {
     return trim(`hostname`);
+}
+
+function api_wol($params)
+{
+    $map = [
+        'desktop' => '00:23:54:47:d5:bc',
+        'htpc'    => '00:50:8d:ba:bb:d2',
+    ];
+    $alias = $params;
+    $response = 'Unknown alias "' . $alias . '"';
+    if (isset($map[$alias])) {
+        $command = 'wakeonlan ' . $map[$alias];
+        $response = exec($command);
+    }
+    return $response;
 }
 
 echo json_encode($response);
