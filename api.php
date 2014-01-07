@@ -56,7 +56,28 @@ function api_lan($params)
 
 function api_top($params)
 {
-    return `top -b -n 1 | tail -n +7 | head -n 6`;
+    $response = [];
+    exec('top -b -n 1 | tail -n +8 | head -n 5', $top);
+    foreach ($top as $line)
+    {
+        $proc = trim($line);
+        list($pid, $user, $pr, $ni, $virt, $res, $shr, $s, $cpu, $mem, $time, $cmd) = preg_split("/\s+/", $proc);
+        $response[] = [
+            'pid'  => $pid,
+            'user' => $user,
+            'pr'   => $pr,
+            'ni'   => $ni,
+            'virt' => $virt,
+            'res'  => $res,
+            'shr'  => $shr,
+            's'    => $s,
+            'cpu'  => $cpu,
+            'mem'  => $mem,
+            'time' => $time,
+            'cmd'  => $cmd,
+        ];
+    }
+    return $response;
 }
 
 function api_sysinfo($params)
@@ -93,12 +114,12 @@ function api_hdd_temp($params)
     $hdd_list = trim($hdd_list, '|');
     foreach (explode('||', $hdd_list) as $hdd_temp)
     {
-            list($dev, $name, $deg, $dim) = explode('|', $hdd_temp);
-            $response[] = [
-                'dev' => $dev,
-                'name' => $name,
-                'deg' => $deg . ' &deg;' . $dim,
-            ];
+        list($dev, $name, $deg, $dim) = explode('|', $hdd_temp);
+        $response[] = [
+            'dev' => $dev,
+            'name' => $name,
+            'deg' => $deg . ' &deg;' . $dim,
+        ];
     }
     return $response;
 }
@@ -109,15 +130,15 @@ function api_hdd_usage($params)
     exec('df -h | tail -n +2', $hdd_mounts);
     foreach ($hdd_mounts as $mount)
     {
-            list($fs, $size, $used, $avail, $use, $mounted) = preg_split("/\s+/", $mount);
-            $response[] = [
-                'fs' => $fs,
-                'size' => $size,
-                'used' => $used,
-                'avail' => $avail,
-                'use' => $use,
-                'mounted' => $mounted,
-            ];
+        list($fs, $size, $used, $avail, $use, $mounted) = preg_split("/\s+/", $mount);
+        $response[] = [
+            'fs' => $fs,
+            'size' => $size,
+            'used' => $used,
+            'avail' => $avail,
+            'use' => $use,
+            'mounted' => $mounted,
+        ];
     }
     return $response;
 }

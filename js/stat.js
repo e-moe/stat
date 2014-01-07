@@ -114,7 +114,30 @@ $(function () {
 
             },
             api_top: function (data) {
-                $('.api-top').html(data);
+                var html = '  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM     TIME+ COMMAND\n',
+                    p,
+                    proc,
+                    cpu_cls,
+                    mem_cls;
+                for (p in data) { if (data.hasOwnProperty(p)) {
+                    proc = data[p];
+                    cpu_cls = 'success';
+                    if (proc.cpu >= 75) {
+                        cpu_cls = 'danger';
+                    } else if (proc.cpu >= 55) {
+                        cpu_cls = 'warning';
+                    }
+                    mem_cls = 'success';
+                    if (proc.mem >= 40) {
+                        mem_cls = 'danger';
+                    } else if (proc.mem >= 70) {
+                        mem_cls = 'warning';
+                    }
+                    html += sprintf('%5s %-8s %3s %3s %5s %4s %4s %s <span class="label label-%s">%4s</span> <span class="label label-%s">%4s</span> %9s %s\n',
+                        proc.pid, proc.user, proc.pr, proc.ni, proc.virt, proc.res, proc.shr, proc.s, cpu_cls, proc.cpu, mem_cls, proc.mem, proc.time, proc.cmd
+                        );
+                } }
+                $('.api-top').html(html);
             },
             api_sysinfo: function (data) {
                 var section_map = {
