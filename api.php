@@ -2,6 +2,10 @@
 include 'Ping.php';
 use \JJG\Ping as Ping;
 
+if(empty($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== 'xmlhttprequest') {
+    die('AJAX only');
+}
+
 header('Content-Type: application/json');
 
 function getData($name, $src, $default = null)
@@ -128,11 +132,14 @@ function api_wol($params)
         'desktop' => '00:23:54:47:d5:bc',
         'htpc'    => '00:50:8d:ba:bb:d2',
     ];
+    $isLocalRequest = 0 === strpos($_SERVER['REMOTE_ADDR'], '192.168.0');
     $alias = $params;
-    $response = 'Unknown alias "' . $alias . '"';
-    if (isset($map[$alias])) {
+    
+    if ($isLocalRequest && isset($map[$alias])) {
         $command = 'wakeonlan ' . $map[$alias];
         $response = exec($command);
+    } else {
+        $response = 'Sprry, you can\' wake up "' . $alias . '"';
     }
     return $response;
 }
