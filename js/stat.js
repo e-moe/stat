@@ -76,6 +76,16 @@ $(function () {
                 $('.alerts').append(sprintf(tmpl, id, html));
                 setTimeout(function () { $('#' + id).remove(); }, timeOut);
             },
+            wrapLabel: function (value, format, lo, hi) {
+                var val = parseFloat(value),
+                    cls = 'success';
+                if (val >= hi) {
+                    cls = 'danger';
+                } else if (val >= lo) {
+                    cls = 'warning';
+                }
+                return sprintf('<span class="label label-%s">' + format + '</span>', cls, value);
+            },
             api_lan: function (data) {
                 var html = '',
                     cols = 8,
@@ -116,25 +126,14 @@ $(function () {
             api_top: function (data) {
                 var html = '  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM     TIME+ COMMAND\n',
                     p,
-                    proc,
-                    cpu_cls,
-                    mem_cls;
+                    proc;
                 for (p in data) { if (data.hasOwnProperty(p)) {
                     proc = data[p];
-                    cpu_cls = 'success';
-                    if (proc.cpu >= 75) {
-                        cpu_cls = 'danger';
-                    } else if (proc.cpu >= 55) {
-                        cpu_cls = 'warning';
-                    }
-                    mem_cls = 'success';
-                    if (proc.mem >= 40) {
-                        mem_cls = 'danger';
-                    } else if (proc.mem >= 70) {
-                        mem_cls = 'warning';
-                    }
-                    html += sprintf('%5s %-8s %3s %3s %5s %4s %4s %s <span class="label label-%s">%4s</span> <span class="label label-%s">%4s</span> %9s %s\n',
-                        proc.pid, proc.user, proc.pr, proc.ni, proc.virt, proc.res, proc.shr, proc.s, cpu_cls, proc.cpu, mem_cls, proc.mem, proc.time, proc.cmd
+                    html += sprintf('%5s %-8s %3s %3s %5s %4s %4s %s %s %s %9s %s\n',
+                        proc.pid, proc.user, proc.pr, proc.ni, proc.virt, proc.res, proc.shr, proc.s,
+                        app.wrapLabel(proc.cpu, '%4s', 55, 75),
+                        app.wrapLabel(proc.mem, '%4s', 40, 70),
+                        proc.time, proc.cmd
                         );
                 } }
                 $('.api-top').html(html);
@@ -165,41 +164,21 @@ $(function () {
             api_hdd_temp: function (data) {
                 var html = '',
                     h,
-                    hdd,
-                    deg,
-                    cls;
+                    hdd;
                 for (h in data) { if (data.hasOwnProperty(h)) {
                     hdd = data[h];
-                    deg = parseInt(hdd.deg, 10);
-                    cls = 'success';
-                    if (deg >= 60) {
-                        cls = 'danger';
-                    } else if (deg >= 50) {
-                        cls = 'warning';
-                    }
-                    html += sprintf('%-9s <span class="label label-%s">%5s</span>  %s\n',
-                        hdd.dev, cls, hdd.deg, hdd.name
-                        );
+                    html += sprintf('%-9s %s  %s\n', hdd.dev, app.wrapLabel(hdd.deg, '%5s', 50, 60), hdd.name);
                 } }
                 $('.api-hdd_temp').html(html);
             },
             api_hdd_usage: function (data) {
                 var html = 'Filesystem                      Size  Used  Avail  Use%  Mounted on\n',
                     h,
-                    hdd,
-                    use,
-                    cls;
+                    hdd;
                 for (h in data) { if (data.hasOwnProperty(h)) {
                     hdd = data[h];
-                    use = parseInt(hdd.use, 10);
-                    cls = 'success';
-                    if (use >= 90) {
-                        cls = 'danger';
-                    } else if (use >= 75) {
-                        cls = 'warning';
-                    }
-                    html += sprintf('%-30s %5s %5s %6s  <span class=\"label label-%s\">%3s</span>  %s\n',
-                        hdd.fs, hdd.size, hdd.used, hdd.avail, cls, hdd.use, hdd.mounted
+                    html += sprintf('%-30s %5s %5s %6s  %s  %s\n',
+                        hdd.fs, hdd.size, hdd.used, hdd.avail, app.wrapLabel(hdd.use, '%3s', 75, 90), hdd.mounted
                         );
                 } }
                 $('.api-hdd_usage').html(html);
