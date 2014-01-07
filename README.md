@@ -1,4 +1,4 @@
-stat v2.0
+stat v2.1
 ====
 
 home server stat
