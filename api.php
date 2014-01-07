@@ -1,5 +1,6 @@
 <?php
-include 'Ping.php';
+require 'vendor/autoload.php';
+
 use \JJG\Ping as Ping;
 
 if(empty($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== 'xmlhttprequest') {
@@ -134,7 +135,7 @@ function api_wol($params)
     ];
     $isLocalRequest = 0 === strpos($_SERVER['REMOTE_ADDR'], '192.168.0');
     $alias = $params;
-    
+
     if ($isLocalRequest && isset($map[$alias])) {
         $command = 'wakeonlan ' . $map[$alias];
         $response = exec($command);

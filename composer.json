@@ -1,0 +1,14 @@
+{
+    "require": {
+        "geerlingguy/ping": "1.*@dev",
+        "components/jquery": "~2.0",
+        "components/bootstrap": "~3.0",
+	"components/sprintf-js": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/nlabinskiy/sprintf.js"
+        }
+    ]
+}
