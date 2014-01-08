@@ -161,7 +161,7 @@ function api_wol($params)
         $command = 'wakeonlan ' . $map[$alias];
         $response = exec($command);
     } else {
-        $response = 'Sprry, you can\' wake up "' . $alias . '"';
+        $response = 'Sprry, you can\'t wake up "' . $alias . '"';
     }
     return $response;
 }
