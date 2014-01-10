@@ -12,6 +12,9 @@ $(function () {
                     context = context[namespaces[i]];
                 }
                 return context[func].apply(this, args);
+            },
+            isLocalIP: function (ip) {
+                return (0 === ip.indexOf('192.168.')) || (0 === ip.indexOf('172.16.')) || (0 === ip.indexOf('10.')) || (0 === ip.indexOf('127.'));
             }
         },
         app = {
@@ -103,7 +106,7 @@ $(function () {
                     name = sprintf('<span data-toggle="tooltip" data-placement="left" title="%s">%s</span>', r.ip, n);
                     cls = 'default';
                     status = false === r.latency ? 'offline' : 'online';
-                    isLocal = 0 === r.ip.indexOf('192.168.');
+                    isLocal = utils.isLocalIP(r.ip);
                     if (false !== r.latency) {
                         if (r.latency < 50) {
                             cls = 'success';
