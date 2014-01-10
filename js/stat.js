@@ -95,13 +95,15 @@ $(function () {
                     align,
                     name,
                     cls,
-                    status;
+                    status,
+                    isLocal;
                 for (n in data) { if (data.hasOwnProperty(n)) {
                     r = data[n].result;
                     align = Math.abs(cols - n.length);
                     name = sprintf('<span data-toggle="tooltip" data-placement="left" title="%s">%s</span>', r.ip, n);
                     cls = 'default';
                     status = false === r.latency ? 'offline' : 'online';
+                    isLocal = 0 === r.ip.indexOf('192.168.');
                     if (false !== r.latency) {
                         if (r.latency < 50) {
                             cls = 'success';
@@ -111,7 +113,10 @@ $(function () {
                             cls = 'danger';
                         }
                     }
-                    latency = sprintf('<a href="#" data-placement="right" title="Wake up" class="label label-%s" data-toggle="modal" data-target="#wol-modal">%s</a>', cls, status);
+                    latency = sprintf('<span class="label label-%s">%s</span>', cls, status);
+                    if (isLocal) {
+                        latency = sprintf('<a href="#" data-placement="right" title="Wake up" class="label label-%s" data-toggle="modal" data-target="#wol-modal">%s</a>', cls, status);
+                    }
                     if (false !== r.latency) {
                         latency = sprintf('<span class="label label-%s" data-placement="right" title="%d ms" >%s</span>',
                             cls, r.latency, status
