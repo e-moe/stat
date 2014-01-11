@@ -17,6 +17,28 @@ $(function () {
                 return (0 === ip.indexOf('192.168.')) || (0 === ip.indexOf('172.16.')) || (0 === ip.indexOf('10.')) || (0 === ip.indexOf('127.'));
             }
         },
+        bootstrap = {
+            alertTimeout: 5000,
+            showAlert: function ($domElem, html, timeout) {
+                var timeOut = timeout || bootstrap.alertTimeout,
+                    id = 'alert-' + Date.now(),
+                    tmpl = '<div id="%s" class="alert alert-warning alert-dismissable">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+                        '%s</div>';
+                $domElem.append(sprintf(tmpl, id, html));
+                setTimeout(function () { $('#' + id).remove(); }, timeOut);
+            },
+            wrapLabel: function (value, format, lo, hi) {
+                var val = parseFloat(value),
+                    cls = 'success';
+                if (val >= hi) {
+                    cls = 'danger';
+                } else if (val >= lo) {
+                    cls = 'warning';
+                }
+                return sprintf('<span class="label label-%s">' + format + '</span>', cls, value);
+            }
+        },
         app = {
             ip: {
                 'desktop': '192.168.0.78',
@@ -26,7 +48,6 @@ $(function () {
                 'yahoo':   '206.190.36.45'
             },
             updateInterval: 15000,
-            alertTimeout: 5000,
             api: 'api.php',
             update: function () {
                 // all in one
@@ -69,25 +90,6 @@ $(function () {
                 for (c in data) { if (data.hasOwnProperty(c)) {
                     utils.executeFunctionByName('api_' + c, app, data[c]);
                 } }
-            },
-            showAlert: function (html, timeout) {
-                var timeOut = timeout || app.alertTimeout,
-                    id = 'alert-' + Date.now(),
-                    tmpl = '<div id="%s" class="alert alert-warning alert-dismissable">' +
-                        '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-                        '%s</div>';
-                $('.alerts').append(sprintf(tmpl, id, html));
-                setTimeout(function () { $('#' + id).remove(); }, timeOut);
-            },
-            wrapLabel: function (value, format, lo, hi) {
-                var val = parseFloat(value),
-                    cls = 'success';
-                if (val >= hi) {
-                    cls = 'danger';
-                } else if (val >= lo) {
-                    cls = 'warning';
-                }
-                return sprintf('<span class="label label-%s">' + format + '</span>', cls, value);
             },
             api_lan: function (data) {
                 var html = '',
@@ -139,8 +141,8 @@ $(function () {
                     proc = data[p];
                     html += sprintf('%5s %-8s %3s %3s %5s %4s %4s %s %s %s %9s %s\n',
                         proc.pid, proc.user, proc.pr, proc.ni, proc.virt, proc.res, proc.shr, proc.s,
-                        app.wrapLabel(proc.cpu, '%4s', 55, 75),
-                        app.wrapLabel(proc.mem, '%4s', 40, 70),
+                        bootstrap.wrapLabel(proc.cpu, '%4s', 55, 75),
+                        bootstrap.wrapLabel(proc.mem, '%4s', 40, 70),
                         proc.time, proc.cmd
                         );
                 } }
@@ -175,7 +177,7 @@ $(function () {
                     hdd;
                 for (h in data) { if (data.hasOwnProperty(h)) {
                     hdd = data[h];
-                    html += sprintf('%-9s %s  %s\n', hdd.dev, app.wrapLabel(hdd.deg, '%5s', 50, 60), hdd.name);
+                    html += sprintf('%-9s %s  %s\n', hdd.dev, bootstrap.wrapLabel(hdd.deg, '%5s', 50, 60), hdd.name);
                 } }
                 $('.api-hdd_temp').html(html);
             },
@@ -186,7 +188,7 @@ $(function () {
                 for (h in data) { if (data.hasOwnProperty(h)) {
                     hdd = data[h];
                     html += sprintf('%-30s %5s %5s %6s  %s  %s\n',
-                        hdd.fs, hdd.size, hdd.used, hdd.avail, app.wrapLabel(hdd.use, '%3s', 75, 90), hdd.mounted
+                        hdd.fs, hdd.size, hdd.used, hdd.avail, bootstrap.wrapLabel(hdd.use, '%3s', 75, 90), hdd.mounted
                         );
                 } }
                 $('.api-hdd_usage').html(html);
@@ -195,7 +197,7 @@ $(function () {
                 $('.api-hostname').html(data);
             },
             api_wol: function (data) {
-                app.showAlert(data);
+                bootstrap.showAlert($('.alerts'), data);
             }
         };
 
