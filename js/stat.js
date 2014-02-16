@@ -41,7 +41,7 @@ $(function () {
         },
         app = {
             ip: {
-                'desktop': '192.168.0.78',
+                'desktop': '192.168.0.83',
                 'htpc':    '192.168.0.72',
                 'google':  '8.8.4.4',
                 'bing':    '204.79.197.200',
@@ -139,7 +139,7 @@ $(function () {
                     proc;
                 for (p in data) { if (data.hasOwnProperty(p)) {
                     proc = data[p];
-                    html += sprintf('%5s %-8s %3s %3s %5s %4s %4s %s %s %s %9s %s\n',
+                    html += sprintf('%5s %-8s %3s %3s %6s %6s %4s %s %s %s %9s %s\n',
                         proc.pid, proc.user, proc.pr, proc.ni, proc.virt, proc.res, proc.shr, proc.s,
                         bootstrap.wrapLabel(proc.cpu, '%4s', 55, 75),
                         bootstrap.wrapLabel(proc.mem, '%4s', 40, 70),
