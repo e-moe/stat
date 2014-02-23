@@ -134,13 +134,13 @@ $(function () {
 
             },
             api_top: function (data) {
-                var html = '  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM     TIME+ COMMAND\n',
+                var html = '  PID USER         VIRT    RES   SHR S %CPU %MEM     TIME+ COMMAND\n',
                     p,
                     proc;
                 for (p in data) { if (data.hasOwnProperty(p)) {
                     proc = data[p];
-                    html += sprintf('%5s %-8s %3s %3s %6s %6s %4s %s %s %s %9s %s\n',
-                        proc.pid, proc.user, proc.pr, proc.ni, proc.virt, proc.res, proc.shr, proc.s,
+                    html += sprintf('%5s %-9s %7s %6s %5s %s %s %s %9s %s\n',
+                        proc.pid, proc.user, proc.virt, proc.res, proc.shr, proc.s,
                         bootstrap.wrapLabel(proc.cpu, '%4s', 55, 75),
                         bootstrap.wrapLabel(proc.mem, '%4s', 40, 70),
                         proc.time, proc.cmd
