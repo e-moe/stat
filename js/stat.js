@@ -1,5 +1,5 @@
 /*jslint browser: true, plusplus: true */
-/*global $: false, sprintf: false*/
+/*global $: false, sprintf: false, Visibility: false*/
 $(function () {
     'use strict';
     var utils = {
@@ -50,6 +50,9 @@ $(function () {
             updateInterval: 15000,
             api: 'api.php',
             update: function () {
+                if (Visibility.hidden()) {
+                    return; // do nothing
+                }
                 // all in one
                 app.getData(
                     ['lan', 'top', 'sysinfo', 'uptime', 'hdd_temp', 'hdd_usage', 'hostname'],
