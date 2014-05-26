@@ -50,9 +50,6 @@ $(function () {
             updateInterval: 15000,
             api: 'api.php',
             update: function () {
-                if (Visibility.hidden()) {
-                    return; // do nothing
-                }
                 // all in one
                 app.getData(
                     ['lan', 'top', 'sysinfo', 'uptime', 'hdd_temp', 'hdd_usage', 'hostname'],
@@ -69,7 +66,7 @@ $(function () {
                 app.getData(['hdd_usage']);
                 app.getData(['hostname']);
 
-                setInterval(app.update, app.updateInterval);
+                Visibility.every(app.updateInterval, app.update);
 
                 $('#wol-modal').on('show.bs.modal', function (e) {
                     var $span = $(e.relatedTarget).prev(),
